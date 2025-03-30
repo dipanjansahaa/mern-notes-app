@@ -4,13 +4,14 @@ import axios from "axios";
 function NoteForm({ setNotes }) {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
+    const BASE_URL = "https://mern-notes-app-w86j.onrender.com/api"; // Use deployed backend
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!title || !content) return alert("Title and content are required!");
 
         try {
-            const response = await axios.post("http://localhost:5000/api/notes", { title, content });
+            const response = await axios.post(`${BASE_URL}/notes`, { title, content });
             setNotes(prevNotes => [...prevNotes, response.data]);
             setTitle("");
             setContent("");
