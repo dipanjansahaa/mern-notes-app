@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 
+const API_URL = "https://mern-notes-app-w86j.onrender.com/api/notes";
+
 function NoteList({ notes, setNotes }) {
     const [editingNote, setEditingNote] = useState(null);
     const [updatedTitle, setUpdatedTitle] = useState("");
@@ -9,7 +11,7 @@ function NoteList({ notes, setNotes }) {
     // Function to delete a note
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`http://localhost:5000/api/notes/${id}`);
+            await axios.delete(`${API_URL}/${id}`);
             setNotes(notes.filter(note => note._id !== id));
         } catch (error) {
             console.error("Error deleting note:", error);
@@ -26,7 +28,7 @@ function NoteList({ notes, setNotes }) {
     // Function to update a note
     const handleUpdate = async (id) => {
         try {
-            const response = await axios.put(`http://localhost:5000/api/notes/${id}`, {
+            const response = await axios.put(`${API_URL}/${id}`, {
                 title: updatedTitle,
                 content: updatedContent
             });

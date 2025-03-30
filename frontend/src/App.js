@@ -4,12 +4,14 @@ import NoteList from "./components/NoteList";
 import NoteForm from "./components/NoteForm";
 import "./styles.css";
 
+const API_URL = "https://mern-notes-app-w86j.onrender.com/api/notes";
+
 function App() {
     const [notes, setNotes] = useState([]);
 
     // Fetch notes from backend
     useEffect(() => {
-        axios.get("http://localhost:5000/api/notes")
+        axios.get(API_URL)
             .then(response => setNotes(response.data))
             .catch(error => console.error("Error fetching notes:", error));
     }, []);
@@ -21,7 +23,6 @@ function App() {
           <NoteList notes={notes} setNotes={setNotes} />
       </div>
   );
-  
 }
 
 export default App;
