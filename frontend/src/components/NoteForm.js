@@ -11,6 +11,10 @@ function NoteForm({ setNotes }) {
         if (!title || !content) return alert("Title and content are required!");
 
         try {
+<<<<<<< HEAD
+=======
+            const BASE_URL = "https://mern-notes-app-w86j.onrender.com/api"; // Use deployed backend
+>>>>>>> e971e6e (Fixed note add)
             const response = await axios.post(`${BASE_URL}/notes`, { title, content });
             setNotes(prevNotes => [...prevNotes, response.data]);
             setTitle("");
