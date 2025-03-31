@@ -16,11 +16,14 @@ const NotesPage = () => {
 
     useEffect(() => {
         if (token) {
-            axios.get(API_URL, { headers: { Authorization: token } })
-                .then(response => setNotes(response.data))
-                .catch(error => console.error("Error fetching notes:", error));
+            axios.get(API_URL, {
+                headers: { Authorization: `Bearer ${token}` } } // Add Bearer prefix
+            )
+            .then(response => setNotes(response.data))
+            .catch(error => console.error("Error fetching notes:", error.response?.data || error.message));
         }
     }, [token]);
+    
 
     return (
         <div className="container">
