@@ -1,12 +1,14 @@
-const express = require('express');
-const Note = require('../models/Note');
+const express = require("express");
+const Note = require("../models/Note");
+const authMiddleware = require("../middleware/authMiddleware");
+
 const router = express.Router();
 
-// Create a Note (POST)
-router.post('/notes', async (req, res) => {
+// Create a Note (POST) - Protected Route
+router.post("/", authMiddleware, async (req, res) => {
     try {
         const { title, content } = req.body;
-        const newNote = new Note({ title, content });
+        const newNote = new Note({ title, content, user: req.user }); // Associate note with logged-in user
         await newNote.save();
         res.status(201).json(newNote);
     } catch (err) {
@@ -14,20 +16,20 @@ router.post('/notes', async (req, res) => {
     }
 });
 
-// Get all Notes (GET)
-router.get('/notes', async (req, res) => {
+// Get All Notes for Logged-in User (GET) - Protected Route
+router.get("/", authMiddleware, async (req, res) => {
     try {
-        const notes = await Note.find();
+        const notes = await Note.find({ user: req.user }); // Fetch only logged-in user's notes
         res.status(200).json(notes);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
 
-// Get a Single Note (GET)
-router.get('/notes/:id', async (req, res) => {
+// Get a Single Note (GET) - Protected Route
+router.get("/:id", authMiddleware, async (req, res) => {
     try {
-        const note = await Note.findById(req.params.id);
+        const note = await Note.findOne({ _id: req.params.id, user: req.user });
         if (!note) return res.status(404).json({ message: "Note not found" });
         res.status(200).json(note);
     } catch (err) {
@@ -35,12 +37,12 @@ router.get('/notes/:id', async (req, res) => {
     }
 });
 
-// Update a Note (PUT)
-router.put('/notes/:id', async (req, res) => {
+// Update a Note (PUT) - Protected Route
+router.put("/:id", authMiddleware, async (req, res) => {
     try {
         const { title, content } = req.body;
-        const updatedNote = await Note.findByIdAndUpdate(
-            req.params.id,
+        const updatedNote = await Note.findOneAndUpdate(
+            { _id: req.params.id, user: req.user }, // Ensure user can only update their own notes
             { title, content },
             { new: true }
         );
@@ -51,10 +53,10 @@ router.put('/notes/:id', async (req, res) => {
     }
 });
 
-// Delete a Note (DELETE)
-router.delete('/notes/:id', async (req, res) => {
+// Delete a Note (DELETE) - Protected Route
+router.delete("/:id", authMiddleware, async (req, res) => {
     try {
-        const deletedNote = await Note.findByIdAndDelete(req.params.id);
+        const deletedNote = await Note.findOneAndDelete({ _id: req.params.id, user: req.user });
         if (!deletedNote) return res.status(404).json({ message: "Note not found" });
         res.status(200).json({ message: "Note deleted successfully" });
     } catch (err) {

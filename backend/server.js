@@ -28,15 +28,18 @@ connectDB(); // Call the function to connect to MongoDB
 
 // Test Route
 app.get("/", (req, res) => {
-    res.send("Hello, MERN Notes App!");
+    res.send("Hello, MERN Notes App with Authentication!");
 });
 
-// Import and use routes
+// ✅ Use ONLY authRoutes.js (NOT auth.js)
+const authRoutes = require("./routes/authRoutes"); 
 const noteRoutes = require("./routes/noteRoutes");
-app.use("/api", noteRoutes);
 
-// Start server only after DB connection is successful
+app.use("/api/auth", authRoutes);  // Authentication routes (Register/Login)
+app.use("/api/notes", noteRoutes); // Notes routes (protected)
+
+// Start server after DB connection is successful
 const PORT = process.env.PORT || 5000;
 mongoose.connection.once("open", () => {
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
 });
